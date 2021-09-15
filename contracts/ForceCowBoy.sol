@@ -171,7 +171,7 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
         emit Transfer(sender, recipient, receiveAmount);
     }
 
-    function _burn(address account, uint256 amount) private {
+    function _burn(address account, uint256 amount) private whenNotPaused {
         require(account != address(0), "ERC20: burn from the zero address");
 
         uint256 accountBalance = _balances[account];
@@ -192,14 +192,6 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
-    }
-
-    function _isContract(address account) private view returns (bool) {
-        uint256 size;
-        assembly {
-            size := extcodesize(account)
-        }
-        return size > 0;
     }
 }
 
