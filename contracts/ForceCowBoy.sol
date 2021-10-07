@@ -20,7 +20,8 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
     string constant public name = "ForceCowBoy";
     string constant public symbol = "FCB";
     uint8 constant public decimals = 18;
-    uint256 private _totalSupply = 100000 * 1E18;
+    uint256 private immutable _cap;
+    uint256 private _totalSupply = 0;
 
     address public beneficiaryAddress;
     uint8 public feePercentage = 4;
@@ -35,10 +36,12 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
     event SetFeePercentage(uint8 feePercentage);
     event SetBeneficiaryAddress(address beneficiaryAddress);
 
-    constructor(address beneficiaryAddress_) {
+    constructor(address beneficiaryAddress_, uint256 cap_) {
+        require(cap_ > 0, "ERC20Capped: cap is 0");
         beneficiaryAddress = beneficiaryAddress_;
         _balances[msg.sender] = _totalSupply;
         isExcluded[msg.sender] = true;
+        _cap = cap_;
     }
 
     function burn(uint256 amount) external {
@@ -192,6 +195,19 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
+    }
+
+    function cap() public view returns (uint256) {
+        return _cap;
+    }
+
+    function mint(address to, uint256 amount) external onlyOwner {
+        require(to != address(0), "ERC20: mint to the zero address");
+        require(_totalSupply + amount <= cap(), "ERC20Capped: cap exceeded");
+
+        _totalSupply += amount;
+        _balances[to] += amount;
+        emit Transfer(address(0), to, amount);
     }
 }
 
