@@ -5,7 +5,7 @@
 - Name: `ForceCowBoy`
 - Symbol: `FCB`
 - Decimals: `18`
-- Total Supply: `10 000 000(TBC)`
+- Total Cap: `10000000000`
 - Beneficiary: `0x60A16F37FF994EAEf3A26b5aC841Fb5A85b1526A`
 - Transaction Fee: `4%`
 
