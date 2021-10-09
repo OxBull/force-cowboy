@@ -39,7 +39,6 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
     constructor(address beneficiaryAddress_, uint256 cap_) {
         require(cap_ > 0, "ERC20Capped: cap is 0");
         beneficiaryAddress = beneficiaryAddress_;
-        _balances[msg.sender] = _totalSupply;
         isExcluded[msg.sender] = true;
         _cap = cap_;
     }
@@ -92,7 +91,16 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
         return true;
     }
 
-    function setBPAddrss(address _bp) external onlyOwner {
+    function mint(address to, uint256 amount) external onlyOwner {
+        require(to != address(0), "ERC20: mint to the zero address");
+        require(_totalSupply + amount <= cap(), "ERC20Capped: cap exceeded");
+
+        _totalSupply += amount;
+        _balances[to] += amount;
+        emit Transfer(address(0), to, amount);
+    }
+
+    function setBPAddress(address _bp) external onlyOwner {
         BP = BPContract(_bp);
     }
 
@@ -129,6 +137,10 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
         }
     }
 
+    function cap() public view returns (uint256) {
+        return _cap;
+    }
+
     function totalSupply() external view virtual override returns (uint256) {
         return _totalSupply;
     }
@@ -148,6 +160,7 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
     ) private whenNotPaused {
         require(sender != address(0), "ERC20: transfer from the zero address");
         require(recipient != address(0), "ERC20: transfer to the zero address");
+
         require(!isBlacklisted[sender], "FCB: transfer from blacklisted address");
         require(!isBlacklisted[recipient], "FCB: transfer to blacklisted address");
         require(!isBlacklisted[tx.origin], "FCB: transfer called from blacklisted address");
@@ -195,19 +208,6 @@ contract ForceCowBoy is IERC20, Ownable, Pausable {
 
         _allowances[owner][spender] = amount;
         emit Approval(owner, spender, amount);
-    }
-
-    function cap() public view returns (uint256) {
-        return _cap;
-    }
-
-    function mint(address to, uint256 amount) external onlyOwner {
-        require(to != address(0), "ERC20: mint to the zero address");
-        require(_totalSupply + amount <= cap(), "ERC20Capped: cap exceeded");
-
-        _totalSupply += amount;
-        _balances[to] += amount;
-        emit Transfer(address(0), to, amount);
     }
 }
 

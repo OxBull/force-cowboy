@@ -8,3 +8,4 @@ secrets.json
 .rgignore
 .archive
 .DS_Store
+test

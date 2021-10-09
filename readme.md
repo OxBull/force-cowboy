@@ -5,8 +5,8 @@
 - Name: `ForceCowBoy`
 - Symbol: `FCB`
 - Decimals: `18`
-- Total Supply: `10000 (TBC)`
-- Beneficiary: `0xF9A20859fd38bb5548952ea4DA8249Cc6cC2f7f0 (TBC)`
+- Total Supply: `10 000 000(TBC)`
+- Beneficiary: `0x60A16F37FF994EAEf3A26b5aC841Fb5A85b1526A`
 - Transaction Fee: `4%`
 
 ### Contracts
